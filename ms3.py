@@ -2,6 +2,19 @@ from flask import Flask, render_template, url_for, flash, redirect
 
 from forms import LoginForm, RegistrationForm
 
+import pymongo
+from pymongo import MongoClient
+
+cluster = MongoClient(
+    "mongodb+srv://admin:Redwine@cluster0.pesdg.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+db = cluster["LogIn"]
+collection = db["Users"]
+
+post = {"_id": 0, "user": "TJ1290",
+        "email": "coopsx@googlemail.com", "password": "redREDwhine"}
+
+collection.insert_one(post)
+
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = '8440dba2fb43df941ec6ad8e8a7f6d56'
@@ -24,7 +37,7 @@ posts = [
 
 @app.route("/")
 @app.route("/index")
-def hello_world():
+def index():
     return render_template('index.html')
 
 
@@ -43,11 +56,10 @@ def login():
     if form.validate_on_submit():
         if form.email.data == 'admin@wineblog.com' and form.password.data == 'password':
             flash('Login Successful.', 'success')
-            return redirect(url_for('login'))s
-        else: 
+            return redirect(url_for('login'))
+        else:
             flash('Login Unsuccessful. Please check details and try again', 'danger')
     return render_template('login.html', title='Login', form=form)
-
 
 
 @app.route("/about")
